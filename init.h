@@ -9,7 +9,6 @@ void initPort_L(void);
 void initPort_M(void);
 void initPort_P(void);
 void initPort_Q(void);
-
 void initPort_N(void);
 
 

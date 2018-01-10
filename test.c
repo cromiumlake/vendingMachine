@@ -1,12 +1,8 @@
 //test.c
 
-/*!
-    \brief This section contains
-    \param[in]      pNetAppEvent is the event passed to the handler
-    \return         None
-    \note
-    \warning
-*/
+#include <stdint.h>
+#include "../tm4c1294ncpdt.h"
+#include "test.h"
 
 void testHW(void){
 	
