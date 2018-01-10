@@ -26,9 +26,13 @@
 #include <stdint.h>
 #include "../tm4c1294ncpdt.h"
 #include "init.h"
+#include "debug.h"
 
 int main(void){
 	initHw();
+#if test
+	testHW();
+#endif	
 
   while(1){
 
