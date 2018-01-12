@@ -11,4 +11,4 @@ void initPort_P(void);
 void initPort_Q(void);
 void initPort_N(void);
 
-
+void motorInit(void);
