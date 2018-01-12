@@ -174,7 +174,8 @@ void motorInit(void){
 
 /*
 Todo:
-*asociate 
+*asociate pins to motor number
+*add switches conf and debug disabling
 
 Development stages:
 stage 0:

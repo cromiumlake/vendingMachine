@@ -20,11 +20,25 @@ static volatile unsigned int error;
 //this interrupt is going to be executed @3xCPS
 void interrupt(void){
 	static unsigned int counter = 0;
+	static unsigned int previousError;
+	unsigned int currentError = GPIO_PORTN_DATA_R & ~0xFFFFF3CC; //clears all except b2, b3
+	
+	if(previousError != currentError){
+		error = currentError;
+		counter = 0;		
+		return;
+	}
 	
 	counter++;
 	if(counter == 3){
-			error = GPIO_PORTN_DATA_R & ~0xFFFFF3CC;
+		if(previousError == currentError && previousError == IDLE){
+			error = IDLE;
+			counter = 0;
+			return;
+		}
 	}
+	
+	previousError = currentError;
 }
 
 
@@ -48,9 +62,15 @@ void sell(unsigned int id){
 Notes:
 	*once the motor is active we need a separate thread to
 		keep track of the responce code
+	*the signal to the mottor:
+		needs to remain high or the motor will stop
+		The stop switch interrupts the power to the motor, but it will continue running after the interruption unless the pin goes low. It only signals the start position. So the nothing/running/jammed logic will briefly glitch to ‘nothing’
+		nothing = idle.
+		It cuts the power to the motor, and the motor's inertia let's it continue and reconnect itself
+		I'm guessing but probably 100-200 mS
 
-Questions:
-	*for how long the response code is up?
-	*does it get reset by itself or at all?
 
+note2:
+*make a table that considers different scenarios and tranlate it to code
 */
+

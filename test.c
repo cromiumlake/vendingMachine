@@ -44,3 +44,13 @@ void testHW(void){
 	GPIO_PORTQ_DATA_R |= 0x02; //PQ1
 }
 
+
+/*
+Notes: 
+*Testing routine will not require money
+*This section aims to check:
+	-Motors working conditions
+	-check interrupt times are at tyhe right frequency
+	-All vending conditions are met
+
+*/

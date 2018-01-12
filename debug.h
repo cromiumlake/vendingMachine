@@ -7,6 +7,9 @@
 //mades the initial test
 #define TEST 1
 
+//allow interaction with switches for tewsting
+#define SWITCH 0
+
 
 //error values from "motors"
 #define IDLE		0X11
