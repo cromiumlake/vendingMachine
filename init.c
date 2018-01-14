@@ -19,7 +19,13 @@
 //D2-3	PP5
 //D2-9	PQ1
 
+//response codes:
+//D1-9	PN3
+//D1-10 	PN2
 
+//switches:
+//PJ0
+//PJ1
 
 
 #include "../tm4c1294ncpdt.h"
@@ -28,14 +34,12 @@
 #include  "structures.h"
 #include "debug.h"
 
-#define TOTALMOTORS 16
-
 
 /*!
-\brief This function initializes ports: A C H K L M P Q 
+\brief This file initializes ports: A C H K L M P Q 
     \param[in]      None
     \return         None
-    \note
+    \note		Port J: used only for switches during testing
     \warning
 */
 
@@ -53,6 +57,10 @@ void initHw(void){
 	
 	//input pins
 	initPort_N();
+	//switches used for testing
+#if SWITCH
+	initPort_J();
+#endif	
 }
 
 void initPort_A(void){
@@ -162,6 +170,21 @@ void initPort_Q(void){
 	GPIO_PORTQ_PCTL_R &= ~0x000000F0;		//normal gpio on bits
 	GPIO_PORTQ_AMSEL_R &= ~0x02;		// disable analog functionality on bits
 }
+
+//switches
+#if SWITCH
+void initPort_J(void){
+	// activate clock for Port J (PJ0, PJ1)
+  SYSCTL_RCGCGPIO_R |= SYSCTL_RCGCGPIO_R8;
+	while((SYSCTL_PRGPIO_R&SYSCTL_RCGCGPIO_R8) == 0){};
+		
+	GPIO_PORTJ_DIR_R &= ~0x03;		//PJ0, PJ1 in
+	GPIO_PORTJ_AFSEL_R &= ~0x03;	// disable alt funct
+	GPIO_PORTJ_DEN_R |= 0x03;			// enable digital I/O
+	GPIO_PORTJ_PCTL_R &= ~0x000000FF;		//normal gpio on bits
+	GPIO_PORTJ_AMSEL_R &= ~0x03;		// disable analog functionality on bits
+}
+#endif	
 //motor defaultvalues
 void motorInit(void){
 	for(unsigned char i=0;i<=MAXMOTORS;i++){
@@ -175,7 +198,7 @@ void motorInit(void){
 /*
 Todo:
 *asociate pins to motor number
-*add switches conf and debug disabling
+*Verify the clock speed
 
 Development stages:
 stage 0:

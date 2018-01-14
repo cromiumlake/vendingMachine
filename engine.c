@@ -18,7 +18,8 @@ This file deals with dispensing the products
 static volatile unsigned int error;
 
 //this interrupt is going to be executed @3xCPS
-void interrupt(void){
+//used for detecting the reply codes
+void interrupt1(void){
 	static unsigned int counter = 0;
 	static unsigned int previousError;
 	unsigned int currentError = GPIO_PORTN_DATA_R & ~0xFFFFF3CC; //clears all except b2, b3
