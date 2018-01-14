@@ -185,14 +185,6 @@ void initPort_J(void){
 	GPIO_PORTJ_AMSEL_R &= ~0x03;		// disable analog functionality on bits
 }
 #endif	
-//motor defaultvalues
-void motorInit(void){
-	for(unsigned char i=0;i<=MAXMOTORS;i++){
-		motor[i].active = 0;
-		motor[i].outputCode = IDLE;
-		motor[i].disable = 0;
-	}
-}
 //********Systick*****************
 //Clock used: 
 //Port: NA

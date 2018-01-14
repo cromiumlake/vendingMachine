@@ -17,13 +17,6 @@ This file deals with dispensing the products
 
 
 
-/*
-Create function to populate the motor settings
-void motorSet(){}
-
-*/
-
-
 //this interrupt is going to be executed @3xCPS
 //used for detecting the reply codes
 unsigned int errorDetect(unsigned int motorN){
@@ -56,15 +49,14 @@ unsigned int errorDetect(unsigned int motorN){
 
 void sell(unsigned int id){
 	unsigned int motorNmber = id;
-	unsigned int productGO = motor[motorNmber].nProducts - motor[motorNmber].productCounter;
+	unsigned int productAvailable = motor[motorNmber].nProducts - motor[motorNmber].productCounter;
 	
-	if(motor[motorNmber].disable &&	productGO > 0){
+	if(motor[motorNmber].enable &&	productAvailable){
 		//move motor
 		motor[motorNmber].active = 1;
 		while(motor[motorNmber].active == 1){
-			
+			motor[motorNmber].start;
 		}
-		//initiate timer/ interrupt
 	}
 
 }

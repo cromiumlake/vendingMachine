@@ -12,15 +12,12 @@ Then we should have a way to place them in the right order
 */
 struct Motors{
 	unsigned char active;
-	unsigned char outputCode;
-	unsigned char disable;
-	unsigned char icID;
+	unsigned char enable;
 	unsigned char nProducts;
 	unsigned char productCounter;
-	unsigned char start;
-	unsigned char stop;
+	volatile unsigned char start;
+	volatile unsigned char stop;
 };
 
 static struct Motors motor[MAXMOTORS];
-
 

@@ -1,4 +1,4 @@
-// LEDTestMain.c
+// Main.c
 // Runs on TM4C1294
 
 /*
@@ -14,7 +14,6 @@ The system starts setting hardware and providing initial values
 #include "../tm4c1294ncpdt.h"
 #include "init.h"
 #include "debug.h"
-#include "test.h"
 #include "random.h"
 #include "buttons.h"
 #include "engine.h"
@@ -23,7 +22,7 @@ volatile unsigned char SysTickFlag = 0;
 volatile unsigned char vending = 0;
 
 #if TEST
-	unsigned int motorN;
+	static unsigned int motorN = 0;
 #endif
 
 #if (SWITCH && TEST)
@@ -87,19 +86,16 @@ void SysTick_Handler(void){
 int main(void){
 	initHw();
 #if TEST
-//	testHW();.
 	Systick_Init(2666666);	//initialized @30Hz (if clock works at 80 MHz)
 
 	while(1){
 		while(SysTickFlag == 0){};
 		//we action the motor	here
-			if(vending == 1){
 				do{
-					motorN = testHW();
 					sell(motorN);
 				}while(vending == 1);
-			}
-
+			
+			motorN++;
 			SysTickFlag = 0;
 	}
 #else
@@ -120,3 +116,4 @@ Notes:
 
 
 */
+
