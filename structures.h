@@ -17,6 +17,8 @@ struct Motors{
 	unsigned char icID;
 	unsigned char nProducts;
 	unsigned char productCounter;
+	unsigned char start;
+	unsigned char stop;
 };
 
 static struct Motors motor[MAXMOTORS];

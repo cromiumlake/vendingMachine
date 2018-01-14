@@ -2,7 +2,8 @@
 
 //this file contains macros for testing
 
-#define MAXMOTORS 16
+//motors go from 0-15
+#define MAXMOTORS 15
 
 //mades the initial test
 #define TEST 1
@@ -53,8 +54,9 @@
 #define M_15_nProducts 	10
 #define M_16_nProducts 	10
 
-
-
+//tasks (Coin waiting, error waiting)
+#define COIN_W 0
+#define ERROR_W 1
 
 /*
 Future todo:

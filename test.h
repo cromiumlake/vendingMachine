@@ -1,4 +1,4 @@
 //test.h
 
-void testHW(void);
+unsigned int testHW(void);
 

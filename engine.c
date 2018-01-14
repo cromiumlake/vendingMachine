@@ -15,31 +15,42 @@ This file deals with dispensing the products
 #include <stdint.h>
 #include "../tm4c1294ncpdt.h"
 
-static volatile unsigned int error;
+
+
+/*
+Create function to populate the motor settings
+void motorSet(){}
+
+*/
+
 
 //this interrupt is going to be executed @3xCPS
 //used for detecting the reply codes
-void interrupt1(void){
-	static unsigned int counter = 0;
-	static unsigned int previousError;
-	unsigned int currentError = GPIO_PORTN_DATA_R & ~0xFFFFF3CC; //clears all except b2, b3
+unsigned int errorDetect(unsigned int motorN){
+	static volatile unsigned int error;
+	static unsigned int idleCounter = 0;
+	static unsigned int previousState;
+	volatile unsigned int currentState = GPIO_PORTN_DATA_R & ~0xFFFFF3CC; //clears all except b2, b3
+	unsigned int MotorN = motorN;
 	
-	if(previousError != currentError){
-		error = currentError;
-		counter = 0;		
-		return;
-	}
 	
-	counter++;
-	if(counter == 3){
-		if(previousError == currentError && previousError == IDLE){
-			error = IDLE;
-			counter = 0;
-			return;
+	if(previousState == IDLE){
+		switch(currentState){
+			case VENDING:
+				currentState = IDLE;
+				return VENDING;
+				break;
+			case IDLE:
+				idleCounter++;
+				return IDLE;
+				break;
+			case JAMMED:
+				return JAMMED;
+				break;
 		}
 	}
-	
-	previousError = currentError;
+
+	previousState = currentState;
 }
 
 

@@ -12,3 +12,6 @@ void initPort_Q(void);
 void initPort_N(void);
 
 void motorInit(void);
+
+void Systick_Init(unsigned long periodSystick);
+

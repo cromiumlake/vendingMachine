@@ -8,7 +8,7 @@
 -please not that "moving motor xx" will be replaced by the 
 righ motor number
 */
-void testHW(void){
+unsigned int testHW(void){
 	static unsigned int i = 0;
 	
 	switch(i){
@@ -77,6 +77,8 @@ void testHW(void){
 			GPIO_PORTQ_DATA_R |= 0x02; //PQ1
 			break;
 	}
+	i++;
+	return (i-1);
 }
 
 
