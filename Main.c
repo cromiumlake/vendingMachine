@@ -17,9 +17,9 @@ The system starts setting hardware and providing initial values
 #include "random.h"
 #include "buttons.h"
 #include "engine.h"
+#include "structures.h"
 
 volatile unsigned char SysTickFlag = 0;
-volatile unsigned char vending = 0;
 
 #if TEST
 	static unsigned int motorN = 0;
@@ -58,15 +58,23 @@ void SysTick_Handler(void){
 		case COIN_W:
 			//credit function NA
 			task = ERROR_W;
-			vending = 1;
 			break;
 		case ERROR_W:{
-			unsigned int error = errorDetect(motorN);
+			unsigned int error = errorDetect();
 			switch(error){
+				case IDLE:
+					motor[motorN].stop;
+					motor[motorN].active = 0;
+					motor[motorN].enable = 0;
+					break;
 				case VENDING:
-					vending = 0;
+					motor[motorN].stop;
+					motor[motorN].active = 0;
 					break;
 				case JAMMED:
+					motor[motorN].stop;
+					motor[motorN].active = 0;
+					motor[motorN].enable = 0;
 					break;
 			}
 			break;
@@ -76,6 +84,7 @@ void SysTick_Handler(void){
 	SysTickFlag = 1;
 }
 #else
+//here we suppose to place the "real code"
 void SysTick_Handler(void){
 
 	SysTickFlag = 1;
@@ -91,12 +100,9 @@ int main(void){
 	while(1){
 		while(SysTickFlag == 0){};
 		//we action the motor	here
-				do{
-					sell(motorN);
-				}while(vending == 1);
-			
-			motorN++;
-			SysTickFlag = 0;
+		sell(motorN);
+		motorN++;
+		SysTickFlag = 0;
 	}
 #else
 	while(1){

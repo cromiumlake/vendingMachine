@@ -4,6 +4,7 @@
 
 //motors go from 0-15
 #define MAXMOTORS 15
+#define MAXIDLING (2666666*3)
 
 //mades the initial test
 #define TEST 1

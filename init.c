@@ -201,6 +201,8 @@ void Systick_Init(unsigned long periodSystick){
 Todo:
 *asociate pins to motor number
 *Verify the clock speed
+*Configure RSCLKCFG
+	check the PLL configurations of example files
 
 Development stages:
 stage 0:
