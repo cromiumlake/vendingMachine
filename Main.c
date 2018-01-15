@@ -19,6 +19,9 @@ The system starts setting hardware and providing initial values
 #include "engine.h"
 #include "structures.h"
 
+//function prototypes
+void EnableInterrupts(void);
+
 volatile unsigned char SysTickFlag = 0;
 
 #if TEST
@@ -63,17 +66,14 @@ void SysTick_Handler(void){
 			unsigned int error = errorDetect();
 			switch(error){
 				case IDLE:
-					motor[motorN].stop;
-					motor[motorN].active = 0;
+					motorStop(motorN);
 					motor[motorN].enable = 0;
 					break;
 				case VENDING:
-					motor[motorN].stop;
-					motor[motorN].active = 0;
+					motorStop(motorN);
 					break;
 				case JAMMED:
-					motor[motorN].stop;
-					motor[motorN].active = 0;
+					motorStop(motorN);
 					motor[motorN].enable = 0;
 					break;
 			}
@@ -94,6 +94,7 @@ void SysTick_Handler(void){
 
 int main(void){
 	initHw();
+	EnableInterrupts();
 #if TEST
 	Systick_Init(2666666);	//initialized @30Hz (if clock works at 80 MHz)
 

@@ -195,6 +195,7 @@ void Systick_Init(unsigned long periodSystick){
   NVIC_ST_CURRENT_R = 0;      						// any write to current clears it
   NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x20000000; // priority 1
   NVIC_ST_CTRL_R = 0x0007; 								// enable,core clock, and interrupts
+																					//CLK_SRC, INTEN, ENABLE
 }
 
 /*

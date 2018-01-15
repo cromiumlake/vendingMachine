@@ -8,6 +8,8 @@ This file deals with dispensing the products
 #include "structures.h"
 #include <stdint.h>
 #include "../tm4c1294ncpdt.h"
+#include "engine.h"
+
 
 //this interrupt is going to be executed @3xCPS
 //used for detecting the reply codes
@@ -49,11 +51,123 @@ void sell(unsigned int id){
 		//move motor
 		motor[motorNmber].active = 1;
 		while(motor[motorNmber].active == 1){
-			motor[motorNmber].start;
+			motorStart(motorNmber);
 		}
 	}
 }
 
+void motorStart(unsigned int motorNumber){
+	unsigned int motorN = motorNumber;
+
+	switch(motorNumber){
+		case 0:
+			GPIO_PORTA_DATA_R |= 0x80; //PA7
+			break;
+		case 1:
+			GPIO_PORTC_DATA_R |= 0x40; //PC6
+			break;
+		case 2:
+			GPIO_PORTC_DATA_R |= 0x80; //PC7
+			break;
+		case 3:
+			GPIO_PORTH_DATA_R |= 0x02; //PH1
+			break;
+		case 4:
+			GPIO_PORTH_DATA_R |= 0x04; //PH2
+			break;
+		case 5:
+			GPIO_PORTH_DATA_R |= 0x08; //PH3
+			break;
+		case 6:
+			GPIO_PORTK_DATA_R |= 0x40; //PK6
+			break;
+		case 7:
+			GPIO_PORTK_DATA_R |= 0x80; //PK7
+			break;
+		case 8:
+			GPIO_PORTL_DATA_R |= 0x01; //PL0
+			break;
+		case 9:
+			GPIO_PORTL_DATA_R |= 0x02; //PL1
+			break;
+		case 10:
+			GPIO_PORTL_DATA_R |= 0x04; //PL2
+			break;
+		case 11:
+			GPIO_PORTL_DATA_R |= 0x08; //PL3
+			break;
+		case 12:
+			GPIO_PORTM_DATA_R |= 0x40; //PM6
+			break;
+		case 13:
+			GPIO_PORTP_DATA_R |= 0x08; //PP3
+			break;
+		case 14:
+			GPIO_PORTP_DATA_R |= 0x20; //PP5
+			break;
+		case 15:
+			GPIO_PORTQ_DATA_R |= 0x02; //PQ1
+			break;
+	}
+	
+	motor[motorNumber].active = 1;
+}
+void motorStop(unsigned int motorNumber){
+	unsigned int motorN = motorNumber;
+
+	switch(motorNumber){
+		case 0:
+			GPIO_PORTA_DATA_R &= ~0x80; //PA7
+			break;
+		case 1:
+			GPIO_PORTC_DATA_R &= ~0x40; //PC6
+			break;
+		case 2:
+			GPIO_PORTC_DATA_R &= ~0x80; //PC7
+			break;
+		case 3:
+			GPIO_PORTH_DATA_R &= ~0x02; //PH1
+			break;
+		case 4:
+			GPIO_PORTH_DATA_R &= ~0x04; //PH2
+			break;
+		case 5:
+			GPIO_PORTH_DATA_R &= ~0x08; //PH3
+			break;
+		case 6:
+			GPIO_PORTK_DATA_R &= ~0x40; //PK6
+			break;
+		case 7:
+			GPIO_PORTK_DATA_R &= ~0x80; //PK7
+			break;
+		case 8:
+			GPIO_PORTL_DATA_R &= ~0x01; //PL0
+			break;
+		case 9:
+			GPIO_PORTL_DATA_R &= ~0x02; //PL1
+			break;
+		case 10:
+			GPIO_PORTL_DATA_R &= ~0x04; //PL2
+			break;
+		case 11:
+			GPIO_PORTL_DATA_R &= ~0x08; //PL3
+			break;
+		case 12:
+			GPIO_PORTM_DATA_R &= ~0x40; //PM6
+			break;
+		case 13:
+			GPIO_PORTP_DATA_R &= ~0x08; //PP3
+			break;
+		case 14:
+			GPIO_PORTP_DATA_R &= ~0x20; //PP5
+			break;
+		case 15:
+			GPIO_PORTQ_DATA_R &= ~0x02; //PQ1
+			break;
+	}
+		
+	motor[motorNumber].active = 0;
+}
 
 /*
 Notes:
