@@ -17,7 +17,7 @@ The system starts setting hardware and providing initial values
 #include "random.h"
 #include "buttons.h"
 #include "engine.h"
-#include "structures.h"
+
 
 //function prototypes
 void EnableInterrupts(void);
@@ -56,25 +56,25 @@ void SysTick_Handler(void){
 
 #elif(TEST)
 void SysTick_Handler(void){
-	static unsigned int task = COIN_W; //waiting for coins will be default
+	static unsigned int task = COIN_HANDLER; //waiting for coins will be default
 	switch(task){
-		case COIN_W:
+		case COIN_HANDLER:
 			//credit function NA
-			task = ERROR_W;
+			task = ERROR_HANDLER;
 			break;
-		case ERROR_W:{
+		case ERROR_HANDLER:{
 			unsigned int error = errorDetect();
 			switch(error){
 				case IDLE:
 					motorStop(motorN);
-					motor[motorN].enable = 0;
+					motorDisable(motorN);
 					break;
 				case VENDING:
 					motorStop(motorN);
 					break;
 				case JAMMED:
 					motorStop(motorN);
-					motor[motorN].enable = 0;
+					motorDisable(motorN);
 					break;
 			}
 			break;
@@ -94,6 +94,7 @@ void SysTick_Handler(void){
 
 int main(void){
 	initHw();
+	motorInit();
 	EnableInterrupts();
 #if TEST
 	Systick_Init(2666666);	//initialized @30Hz (if clock works at 80 MHz)
@@ -112,8 +113,6 @@ int main(void){
 	}
 #endif	
 }
-
-
 
 /*
 Notes:

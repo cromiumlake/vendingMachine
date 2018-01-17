@@ -3,7 +3,7 @@
 //this file contains macros for testing
 
 //motors go from 0-15
-#define MAXMOTORS 15
+#define MAXMOTORS 16
 #define MAXIDLING (2666666*3)
 
 //mades the initial test
@@ -56,8 +56,8 @@
 #define M15_nProducts 	10
 
 //tasks (Coin waiting, error waiting)
-#define COIN_W 0
-#define ERROR_W 1
+#define COIN_HANDLER	0
+#define ERROR_HANDLER 1
 
 /*
 Future todo:

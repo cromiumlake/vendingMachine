@@ -31,7 +31,6 @@
 #include "../tm4c1294ncpdt.h"
 #include <stdint.h>
 #include "init.h"
-#include  "structures.h"
 #include "debug.h"
 
 
@@ -55,7 +54,7 @@ void initHw(void){
 	initPort_P();
 	initPort_Q();
 	
-	//input pins
+	//input pins for errors
 	initPort_N();
 	//switches used for testing
 #if SWITCH
@@ -197,6 +196,14 @@ void Systick_Init(unsigned long periodSystick){
   NVIC_ST_CTRL_R = 0x0007; 								// enable,core clock, and interrupts
 																					//CLK_SRC, INTEN, ENABLE
 }
+
+/*
+issues:
+	*** error 65: access violation at 0x400FE608 : no 'write' permission
+
+
+
+*/
 
 /*
 Todo:
