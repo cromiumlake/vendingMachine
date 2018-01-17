@@ -17,7 +17,6 @@ struct Motors{
 	unsigned char active;
 	unsigned char enable;
 	unsigned char nProducts;
-	unsigned char productCounter;
 };
 
 struct Motors motor[MAXMOTORS];
@@ -27,161 +26,110 @@ void motorInit(void){
 	motor[0].active = 0;
 	motor[0].enable = M0_enable;
 	motor[0].nProducts = M0_nProducts;
-	motor[0].productCounter = 0;
 #endif
 	
 #if M1_enable
 	motor[1].active = 0;
 	motor[1].enable = M1_enable;
 	motor[1].nProducts = M1_nProducts;
-	motor[1].productCounter = 0;
 #endif
 	
 #if M2_enable
 	motor[2].active = 0;
 	motor[2].enable = M2_enable;
 	motor[2].nProducts = M2_nProducts;
-	motor[2].productCounter = 0;
 #endif
 	
 #if M3_enable
 	motor[3].active = 0;
 	motor[3].enable = M3_enable;
 	motor[3].nProducts = M3_nProducts;
-	motor[3].productCounter = 0;
 #endif
 
 #if M4_enable
 	motor[4].active = 0;
 	motor[4].enable = M4_enable;
 	motor[4].nProducts = M4_nProducts;
-	motor[4].productCounter = 0;
 #endif
 
 #if M5_enable
 	motor[5].active = 0;
 	motor[5].enable = M5_enable;
 	motor[5].nProducts = M5_nProducts;
-	motor[5].productCounter = 0;
 #endif
 
 #if M6_enable
 	motor[6].active = 0;
 	motor[6].enable = M6_enable;
 	motor[6].nProducts = M6_nProducts;
-	motor[6].productCounter = 0;
 #endif
 
 #if M7_enable
 	motor[7].active = 0;
 	motor[7].enable = M7_enable;
 	motor[7].nProducts = M7_nProducts;
-	motor[7].productCounter = 0;
 #endif
 
 #if M8_enable
 	motor[8].active = 0;
 	motor[8].enable = M8_enable;
 	motor[8].nProducts = M8_nProducts;
-	motor[8].productCounter = 0;
 #endif
 
 #if M9_enable
 	motor[9].active = 0;
 	motor[9].enable = M9_enable;
 	motor[9].nProducts = M9_nProducts;
-	motor[9].productCounter = 0;
 #endif
 
 #if M10_enable
 	motor[10].active = 0;
 	motor[10].enable = M10_enable;
 	motor[10].nProducts = M10_nProducts;
-	motor[10].productCounter = 0;
 #endif
 
 #if M11_enable
 	motor[11].active = 0;
 	motor[11].enable = M11_enable;
 	motor[11].nProducts = M11_nProducts;
-	motor[11].productCounter = 0;
 #endif
 
 #if M12_enable
 	motor[12].active = 0;
 	motor[12].enable = M12_enable;
 	motor[12].nProducts = M12_nProducts;
-	motor[12].productCounter = 0;
 #endif
 
 #if M13_enable
 	motor[13].active = 0;
 	motor[13].enable = M13_enable;
 	motor[13].nProducts = M13_nProducts;
-	motor[13].productCounter = 0;
 #endif
 
 #if M14_enable
 	motor[14].active = 0;
 	motor[14].enable = M14_enable;
 	motor[14].nProducts = M14_nProducts;
-	motor[14].productCounter = 0;
 #endif
 
 #if M15_enable
 	motor[15].active = 0;
 	motor[15].enable = M15_enable;
 	motor[15].nProducts = M15_nProducts;
-	motor[15].productCounter = 0;
 #endif
 }
 //-----------------------------------------------------------------------
-//this interrupt is going to be executed @3xCPS
-//used for detecting the reply codes
-unsigned int errorDetect(void){
-	static volatile unsigned int error;
-	static unsigned int idleCounter = 0;
-	static unsigned int previousState;
-	volatile unsigned int currentState = GPIO_PORTN_DATA_R & ~0xFFFFF3CC; //clears all except b2, b3
-	
-	if(previousState == IDLE){
-		switch(currentState){
-			case VENDING:
-				currentState = IDLE;
-				error = VENDING;
-				break;
-			case IDLE:
-				idleCounter++;
-				if(idleCounter > MAXIDLING){
-					error =  IDLE;
-					idleCounter = 0;
-				}
-				break;
-			case JAMMED:
-				error =  JAMMED;
-				break;
-		}
-	}
-
-	previousState = currentState;
-	return error;
-}
-
-
 void sell(unsigned int id){
-	unsigned int motorNmber = id;
-	unsigned int productAvailable = motor[motorNmber].nProducts - motor[motorNmber].productCounter;
 	
-	if(motor[motorNmber].enable &&	productAvailable){
+	if(motor[id].enable &&	motor[id].nProducts){
 		//move motor
-			motorStart(motorNmber);
+		motorStart(id);
 	}
 }
 
-void motorStart(unsigned int motorNumber){
-	unsigned int motorN = motorNumber;
+void motorStart(unsigned int id){
 
-	switch(motorN){
+	switch(id){
 		case 0:
 			GPIO_PORTA_DATA_R |= 0x80; //PA7
 			break;
@@ -232,12 +180,11 @@ void motorStart(unsigned int motorNumber){
 			break;
 	}
 	
-	motor[motorNumber].active = 1;
+	motor[id].active = 1;
 }
-void motorStop(unsigned int motorNumber){
-	unsigned int motorN = motorNumber;
+void motorStop(unsigned int id){
 
-	switch(motorN){
+	switch(id){
 		case 0:
 			GPIO_PORTA_DATA_R &= ~0x80; //PA7
 			break;
@@ -288,12 +235,21 @@ void motorStop(unsigned int motorNumber){
 			break;
 	}
 		
-	motor[motorNumber].active = 0;
+	motor[id].active = 0;
 }
 
 
-void motorDisable(unsigned int motorN){
-	motor[motorN].enable = 0;
+void motorDisable(unsigned int id){
+	motor[id].enable = 0;
+}
+
+
+unsigned int isMotorActive(unsigned int id){
+	return motor[id].active;
+}
+
+void itemSold(unsigned int id){
+	motor[id].nProducts--;
 }
 
 /*

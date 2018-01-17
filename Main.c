@@ -25,30 +25,24 @@ void EnableInterrupts(void);
 volatile unsigned char SysTickFlag = 0;
 
 #if TEST
-	static unsigned int motorN = 0;
+volatile static unsigned int motorN = 0;
 #endif
 
 #if (SWITCH && TEST)
 void SysTick_Handler(void){
-	volatile static unsigned char clickCounter1 = 0;			//keeps track of clicks
-	volatile static unsigned char clickCounter2 = 0;			//keeps track of clicks
+	static unsigned int task = COIN_HANDLER; //waiting for coins will be default
+	static unsigned int credit = 0;
 	
 	//represents £1
 	//Use any motor 0-7
 	if(Switch_B1()){
-		Random_Init(NVIC_CURRENT_R);
-		unsigned int m = Random32()%7;
-		sell(m);
-		clickCounter1 = 0;
+		credit = 100;
 	}
 	
 	//represents £0.50
 	//Use any motor 8-16
 	if(Switch_B2()){
-		Random_Init(NVIC_CURRENT_R);
-		unsigned int m = 7 + Random32()%7;
-		sell(m);
-		clickCounter2 = 0;
+		credit = 50;
 	}
 
 	SysTickFlag = 1;
@@ -57,31 +51,54 @@ void SysTick_Handler(void){
 #elif(TEST)
 void SysTick_Handler(void){
 	static unsigned int task = COIN_HANDLER; //waiting for coins will be default
+	static unsigned int idleCount = 0;
+	static unsigned int previousCode;
+	
 	switch(task){
 		case COIN_HANDLER:
 			//credit function NA
 			task = ERROR_HANDLER;
+			SysTickFlag = 1;
 			break;
 		case ERROR_HANDLER:{
-			unsigned int error = errorDetect();
-			switch(error){
+			volatile unsigned int currentCode = (GPIO_PORTN_DATA_R & ~0xFFFFF3CC); //clears all except b2, b3
+			switch(currentCode){
 				case IDLE:
-					motorStop(motorN);
-					motorDisable(motorN);
+					if(previousCode == VENDING){
+						//item sold
+						motorStop(motorN);
+						itemSold(motorN);
+						motorN++;
+						idleCount = 0;
+						task = COIN_HANDLER;
+						SysTickFlag = 1;
+					}
+					else{
+						idleCount++;
+						if(idleCount > MAXIDLING){
+							motorStop(motorN);
+							motorDisable(motorN);
+							idleCount = 0;
+							task = COIN_HANDLER;
+							SysTickFlag = 1;
+						}
+					}
 					break;
-				case VENDING:
-					motorStop(motorN);
-					break;
+//				case VENDING:
+//					//no idea
+//					break;
 				case JAMMED:
 					motorStop(motorN);
 					motorDisable(motorN);
+					idleCount = 0;
+					task = COIN_HANDLER;
+					SysTickFlag = 1;
 					break;
 			}
+			previousCode = currentCode;
 			break;
 		}
 	}
-
-	SysTickFlag = 1;
 }
 #else
 //here we suppose to place the "real code"
@@ -102,8 +119,12 @@ int main(void){
 	while(1){
 		while(SysTickFlag == 0){};
 		//we action the motor	here
-		sell(motorN);
-		motorN++;
+		unsigned int active = isMotorActive(motorN);
+
+		if(~active){
+			sell(motorN);
+		}
+		
 		SysTickFlag = 0;
 	}
 #else
@@ -120,6 +141,7 @@ Notes:
 	look for errors
 	look for coins
 
-
+-Next step:
+	merge errorDetect into handler
 */
 
